@@ -7,9 +7,11 @@ import (
 
 func main() {
 	// Generate Map
-	terrain := world.GetTerrain(1, "grass", ".", true)
-	worldMap := world.CreateMapSingleTerrain(terrain, 10, 20)
+	terrain := world.GetTerrain(1, "grass", "·", true)
+	worldMap := world.CreateMapSingleTerrain(terrain, 40, 20)
+	border := world.CreateBorder("|", "_", "‾")
+	borderedMap := world.AddBorder(*worldMap, border)
 	renderer := rendering.AsciiRenderer{}
-	renderer.RenderMap(*worldMap)
+	renderer.RenderMap(borderedMap)
 
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/kamikredstone/Untitled_RPG/world"
 )
 
-type AsciiRenderer struct{} // Implements the AsciiRenderer interface
+type AsciiRenderer struct{} // Implements the Renderer interface from world
 
 func (a *AsciiRenderer) RenderTile(t world.Tile) string {
 	return t.TerrainType.Graphic
