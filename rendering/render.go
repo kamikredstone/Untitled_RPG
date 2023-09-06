@@ -12,8 +12,8 @@ func (a *AsciiRenderer) RenderTile(t world.Tile) string {
 	return t.TerrainType.Graphic
 }
 
-func (a *AsciiRenderer) RenderMap(m world.Map) {
-	for _, row := range m.Tiles {
+func (a *AsciiRenderer) RenderRoom(m world.Room) {
+	for _, row := range m.Map.Tiles {
 		for _, tile := range row {
 			fmt.Print(a.RenderTile(tile))
 		}

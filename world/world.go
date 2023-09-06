@@ -122,3 +122,10 @@ func AddBorder(originalMap Map, border Border) Map {
 	}
 	return newMap
 }
+
+func CreateRoom(roomMap Map) Room {
+	return Room{
+		Map:  roomMap,
+		GUID: uuid.New(),
+	}
+}

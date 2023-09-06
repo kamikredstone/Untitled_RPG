@@ -6,6 +6,7 @@ import (
 )
 
 type Entity interface {
+	//Getters
 	GetName() string
 	GetLevel() *int
 	GetStats() *CharacterStats
@@ -16,6 +17,8 @@ type Entity interface {
 	GetHP() *int
 	GetMP() *int
 	GetInitiative() *int
+	//Movement
+	ChangePosition(EntityPosition) error
 }
 
 type EntityPosition struct {
@@ -79,4 +82,44 @@ func (p *PlayerCharacter) GetLevel() *int {
 
 func (p *PlayerCharacter) GetInitiative() *int {
 	return p.Initiative
+}
+
+func (p *PlayerCharacter) ChangePosition(newPosition EntityPosition) {
+	p.Position.X = newPosition.X
+	p.Position.Y = newPosition.Y
+}
+
+func CreateDummyPlayerCharacter(room *world.Room) *PlayerCharacter {
+	charName := "TestName"
+	Level := 1
+	HP := 10
+	MP := 10
+	Initiative := 0
+	Stats := &CharacterStats{
+		Strength:     1,
+		Constitution: 1,
+		Dexterity:    1,
+		Intelligence: 1,
+		Charisma:     1,
+	}
+	Inventory := make([]items.Item, 0)
+	Equipment := make([]items.Item, 0)
+	Graphic := "@"
+	Position := EntityPosition{
+		X: 0,
+		Y: 0,
+	}
+	return &PlayerCharacter{
+		Name:       charName,
+		Level:      &Level,
+		HP:         &HP,
+		MP:         &MP,
+		Initiative: &Initiative,
+		Stats:      Stats,
+		Inventory:  Inventory,
+		Equipment:  Equipment,
+		Graphic:    Graphic,
+		Position:   &Position,
+		Room:       room,
+	}
 }
