@@ -2,28 +2,18 @@ package main
 
 import (
 	"github.com/gdamore/tcell/v2"
+	"github.com/kamikredstone/Untitled_RPG/rendering"
+	"github.com/kamikredstone/Untitled_RPG/world"
 	"github.com/rivo/tview"
 )
 
-const (
-	playerChar = '@'
-	emptySpace = ' '
-	mapWidth   = 20
-	mapHeight  = 20
-)
-
-var (
-	playerX = mapWidth / 2
-	playerY = mapHeight / 2
-	gameMap [mapHeight][mapWidth]rune
-)
-
 func main() {
-	for y := 0; y < mapHeight; y++ {
-		for x := 0; x < mapWidth; x++ {
-			gameMap[y][x] = emptySpace
-		}
-	}
+
+	// Render map
+	// initialize renderer
+	renderer := rendering.AsciiRenderer{}
+	// Create room
+	terrain := world.GetTerrain(1, "grass", graphic, isWalkable)
 
 	app := tview.NewApplication()
 
