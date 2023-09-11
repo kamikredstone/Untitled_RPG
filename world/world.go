@@ -2,6 +2,7 @@ package world
 
 import (
 	"github.com/google/uuid"
+	"github.com/kamikredstone/Untitled_RPG/entities"
 )
 
 type Renderer interface {
@@ -13,11 +14,13 @@ type Terrain struct {
 	MovementMultiplier int
 	Name               string
 	Graphic            string
+	CurrentGraphic     string
 	IsWalkable         bool
 }
 
 type Tile struct {
 	TerrainType Terrain
+	Entity      entities.Entity
 }
 
 type Map struct {
@@ -60,11 +63,12 @@ func CreateBorder(verticalGraphic string, horizontalTopGraphic string, horizonta
 	}
 }
 
-func GetTerrain(mvmnt int, name string, graphic string, isWalkable bool) Terrain {
+func GetTerrain(mvmnt int, name string, graphic string, currentGraphic string, isWalkable bool) Terrain {
 	return Terrain{
 		MovementMultiplier: mvmnt,
 		Name:               name,
 		Graphic:            graphic,
+		CurrentGraphic:     currentGraphic,
 		IsWalkable:         isWalkable,
 	}
 }
@@ -88,13 +92,13 @@ func AddBorder(originalMap Map, border Border) Map {
 	}
 
 	// Create top border tile
-	topTerrain := GetTerrain(0, "border", border.HorizontalTopGraphic, false)
+	topTerrain := GetTerrain(0, "border", border.HorizontalTopGraphic, border.HorizontalTopGraphic, false)
 	topTile := GetTile(topTerrain)
 	// Create bottom border tile
-	bottomTerrain := GetTerrain(0, "border", border.HorizontalBottomGraphic, false)
+	bottomTerrain := GetTerrain(0, "border", border.HorizontalBottomGraphic, border.HorizontalBottomGraphic, false)
 	bottomTile := GetTile(bottomTerrain)
 	// Create vertical border tile
-	verticalTerrain := GetTerrain(0, "border", border.VerticalGraphic, false)
+	verticalTerrain := GetTerrain(0, "border", border.VerticalGraphic, border.VerticalGraphic, false)
 	verticalTile := GetTile(verticalTerrain)
 
 	// Fill the new map

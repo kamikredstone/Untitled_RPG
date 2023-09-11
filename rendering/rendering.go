@@ -1,22 +1,25 @@
 package rendering
 
 import (
-	"fmt"
-
 	"github.com/kamikredstone/Untitled_RPG/world"
 )
 
 type AsciiRenderer struct{} // Implements the Renderer interface from world
 
-func (a *AsciiRenderer) RenderTile(t world.Tile) string {
+func (a *AsciiRenderer) RenderTile(t *world.Tile) string {
+	if t.Entity != nil {
+		return t.Entity.GetGraphic()
+	}
 	return t.TerrainType.Graphic
 }
 
-func (a *AsciiRenderer) RenderRoom(m world.Room) {
+func (a *AsciiRenderer) RenderRoom(m *world.Room) string {
+	var output string = ""
 	for _, row := range m.Map.Tiles {
 		for _, tile := range row {
-			fmt.Print(a.RenderTile(tile))
+			output += a.RenderTile(&tile)
 		}
-		fmt.Println()
+		output += "\n"
 	}
+	return output
 }
