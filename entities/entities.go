@@ -11,6 +11,47 @@ type Entity interface {
 	SetPosition(int, int) error
 }
 
+type Monster struct {
+	Name     string
+	Graphic  string
+	Position map[string]int
+}
+
+func NewMonster(name string, graphic string, position map[string]int) *Monster {
+	return &Monster{
+		Name:     name,
+		Graphic:  graphic,
+		Position: position,
+	}
+}
+
+func (m *Monster) GetName() string {
+	return m.Name
+}
+
+func (m *Monster) GetGraphic() string {
+	return m.Graphic
+}
+
+func (m *Monster) GetPosition() map[string]int {
+	return m.Position
+}
+
+func (m *Monster) SetPosition(x int, y int) error {
+	m.Position["X"] = x
+	m.Position["Y"] = y
+	return nil
+}
+
+func EntityFactory(entityType string, name string, graphic string, position map[string]int) Entity {
+	switch entityType {
+	case "monster":
+		return NewMonster(name, graphic, position)
+	default:
+		return nil
+	}
+}
+
 type Player struct {
 	Name     string
 	Graphic  string

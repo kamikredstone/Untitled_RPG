@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/kamikredstone/Untitled_RPG/entities"
@@ -14,8 +15,14 @@ func moveEntity(e entities.Entity, x int, y int, room *world.Room) error {
 	if x < 0 || x >= len(room.Map.Tiles[0]) || y < 0 || y >= len(room.Map.Tiles) {
 		return errors.New("out of bounds")
 	}
-	if !room.Map.Tiles[y][x].TerrainType.IsWalkable {
+	if !(*room).Map.Tiles[y][x].TerrainType.IsWalkable {
 		return errors.New("can't move to the specified tile")
+	}
+	// check if the destination is a door
+	doorKey := fmt.Sprintf("%d,%d", x, y)
+	if door, exists := room.Doors[doorKey]; exists {
+		room = door.ToRoom
+		x, y = door.DestinationEntry["X"], door.DestinationEntry["Y"]
 	}
 	oldX, oldY := e.GetPosition()["X"], e.GetPosition()["Y"]
 	room.Map.Tiles[oldY][oldX].Entity = nil // remove the player from the old position
@@ -39,6 +46,7 @@ func main() {
 	border := world.CreateBorder("|", "_", "‾")
 	borderedMap := world.AddBorder(*worldMap, border)
 	mainRoom := world.CreateRoom(borderedMap)
+	fmt.Print(renderer.RenderRoom(&mainRoom))
 
 	app := tview.NewApplication()
 	newPlayerPosition := make(map[string]int)

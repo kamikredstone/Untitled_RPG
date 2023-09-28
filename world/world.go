@@ -1,6 +1,8 @@
 package world
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/kamikredstone/Untitled_RPG/entities"
 )
@@ -23,6 +25,12 @@ type Tile struct {
 	Entity      entities.Entity
 }
 
+type Door struct {
+	Graphic          string
+	ToRoom           *Room
+	DestinationEntry map[string]int
+}
+
 type Map struct {
 	Tiles  [][]Tile
 	Size_X int
@@ -30,8 +38,9 @@ type Map struct {
 }
 
 type Room struct {
-	Map  Map
-	GUID uuid.UUID
+	Map   Map
+	GUID  uuid.UUID
+	Doors map[string]*Door //position of the door as key
 }
 
 type Border struct {
@@ -125,6 +134,23 @@ func AddBorder(originalMap Map, border Border) Map {
 		}
 	}
 	return newMap
+}
+
+func AddDoorToBorder(originalRoom *Room, doorGraphic string, positionX int, positionY int, toRoom *Room) *Room {
+	doorTerrain := GetTerrain(1, "door", doorGraphic, doorGraphic, true)
+	doorTile := GetTile(doorTerrain)
+
+	originalRoom.Map.Tiles[positionY][positionX] = doorTile
+
+	if originalRoom.Doors == nil {
+		originalRoom.Doors = make(map[string]*Door)
+	}
+	positionKey := fmt.Sprintf("%d,%d", positionX, positionY)
+	originalRoom.Doors[positionKey] = &Door{
+		Graphic: doorGraphic,
+		ToRoom:  toRoom,
+	}
+	return originalRoom
 }
 
 func CreateRoom(roomMap Map) Room {
