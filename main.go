@@ -41,7 +41,7 @@ func main() {
 	renderer := rendering.AsciiRenderer{}
 	// Create room
 	grassTerrain := "·"
-	terrain := world.GetTerrain(1, "grass", grassTerrain, grassTerrain, true)
+	terrain := world.CreateTerrain(1, "grass", grassTerrain, grassTerrain, true)
 	worldMap := world.CreateMapSingleTerrain(terrain, 40, 20)
 	border := world.CreateBorder("|", "_", "‾")
 	borderedMap := world.AddBorder(*worldMap, border)

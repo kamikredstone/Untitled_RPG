@@ -12,6 +12,8 @@ type Renderer interface {
 	RenderMap(m Map)
 }
 
+// The most basic type of struct.
+// The tile struct contains a Terrain struct.
 type Terrain struct {
 	MovementMultiplier int
 	Name               string
@@ -20,35 +22,49 @@ type Terrain struct {
 	IsWalkable         bool
 }
 
+// The second basic type of struct.
+// The Map struct contains a two-dimensional Tile struct.
+// The tile struct can also represent an entity standing on it.
 type Tile struct {
 	TerrainType Terrain
 	Entity      entities.Entity
 }
 
+// A struct that represents a door leading to a different room.
 type Door struct {
 	Graphic          string
 	ToRoom           *Room
-	DestinationEntry map[string]int
+	DestinationEntry map[string]int // X: 5, Y: 2
 }
 
+// The third basic type of struct.
+// The Room struct continas a Map struct.
+// This struct represents the map of the room
+// and the size of it.
 type Map struct {
 	Tiles  [][]Tile
 	Size_X int
 	Size_Y int
 }
 
+// The Room struct is the upper-most struct.
+// Each instance of this struct represents a room in the map.
+// It has a map of the room and a hash table of doors that connect
+// to other rooms/levels.
 type Room struct {
 	Map   Map
 	GUID  uuid.UUID
 	Doors map[string]*Door //position of the door as key
 }
 
+// A struct that represents the Border graphics of the room.
 type Border struct {
 	VerticalGraphic         string
 	HorizontalTopGraphic    string
 	HorizontalBottomGraphic string
 }
 
+// This function is used to create a pointer to a map with a single terrain in it.
 func CreateMapSingleTerrain(terrainType Terrain, size_x int, size_y int) *Map {
 	newMap := &Map{
 		Tiles:  make([][]Tile, size_x),
@@ -58,12 +74,13 @@ func CreateMapSingleTerrain(terrainType Terrain, size_x int, size_y int) *Map {
 	for i := range newMap.Tiles {
 		newMap.Tiles[i] = make([]Tile, size_y)
 		for j := range newMap.Tiles[i] {
-			newMap.Tiles[i][j] = GetTile(terrainType)
+			newMap.Tiles[i][j] = CreateTile(terrainType)
 		}
 	}
 	return newMap
 }
 
+// This function creates a border object.
 func CreateBorder(verticalGraphic string, horizontalTopGraphic string, horizontalBottomGraphic string) Border {
 	return Border{
 		VerticalGraphic:         verticalGraphic,
@@ -72,7 +89,8 @@ func CreateBorder(verticalGraphic string, horizontalTopGraphic string, horizonta
 	}
 }
 
-func GetTerrain(mvmnt int, name string, graphic string, currentGraphic string, isWalkable bool) Terrain {
+// This function creates a Terrain object.
+func CreateTerrain(mvmnt int, name string, graphic string, currentGraphic string, isWalkable bool) Terrain {
 	return Terrain{
 		MovementMultiplier: mvmnt,
 		Name:               name,
@@ -82,10 +100,12 @@ func GetTerrain(mvmnt int, name string, graphic string, currentGraphic string, i
 	}
 }
 
-func GetTile(terrainType Terrain) Tile {
+// This function creates a Tile object.
+func CreateTile(terrainType Terrain) Tile {
 	return Tile{TerrainType: terrainType}
 }
 
+// This function adds a border to a Map.
 func AddBorder(originalMap Map, border Border) Map {
 	if len(originalMap.Tiles) == 0 {
 		return originalMap
@@ -101,14 +121,14 @@ func AddBorder(originalMap Map, border Border) Map {
 	}
 
 	// Create top border tile
-	topTerrain := GetTerrain(0, "border", border.HorizontalTopGraphic, border.HorizontalTopGraphic, false)
-	topTile := GetTile(topTerrain)
+	topTerrain := CreateTerrain(0, "border", border.HorizontalTopGraphic, border.HorizontalTopGraphic, false)
+	topTile := CreateTile(topTerrain)
 	// Create bottom border tile
-	bottomTerrain := GetTerrain(0, "border", border.HorizontalBottomGraphic, border.HorizontalBottomGraphic, false)
-	bottomTile := GetTile(bottomTerrain)
+	bottomTerrain := CreateTerrain(0, "border", border.HorizontalBottomGraphic, border.HorizontalBottomGraphic, false)
+	bottomTile := CreateTile(bottomTerrain)
 	// Create vertical border tile
-	verticalTerrain := GetTerrain(0, "border", border.VerticalGraphic, border.VerticalGraphic, false)
-	verticalTile := GetTile(verticalTerrain)
+	verticalTerrain := CreateTerrain(0, "border", border.VerticalGraphic, border.VerticalGraphic, false)
+	verticalTile := CreateTile(verticalTerrain)
 
 	// Fill the new map
 	for row := 0; row <= yLen-1; row++ {
@@ -136,9 +156,10 @@ func AddBorder(originalMap Map, border Border) Map {
 	return newMap
 }
 
-func AddDoorToBorder(originalRoom *Room, doorGraphic string, positionX int, positionY int, toRoom *Room) *Room {
-	doorTerrain := GetTerrain(1, "door", doorGraphic, doorGraphic, true)
-	doorTile := GetTile(doorTerrain)
+// This function adds doors to the border.
+func AddDoorToRoom(originalRoom *Room, doorGraphic string, positionX int, positionY int, toRoom *Room) *Room {
+	doorTerrain := CreateTerrain(1, "door", doorGraphic, doorGraphic, true)
+	doorTile := CreateTile(doorTerrain)
 
 	originalRoom.Map.Tiles[positionY][positionX] = doorTile
 
@@ -153,6 +174,7 @@ func AddDoorToBorder(originalRoom *Room, doorGraphic string, positionX int, posi
 	return originalRoom
 }
 
+// This function creates a room from a map.
 func CreateRoom(roomMap Map) Room {
 	return Room{
 		Map:  roomMap,
